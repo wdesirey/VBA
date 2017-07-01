@@ -1,0 +1,99 @@
+Option Explicit
+
+Sub Recon()
+Dim i%, j%, t, rng As Range, lrow%, arr, brr, tmp, d As Object, k, Max%, Min%
+Set d = CreateObject("Scripting.Dictionary")
+lrow = Sheets("Reconciliation Listing").Range("D65536").End(xlUp).Row
+For i = 4 To lrow
+    Range("E" & i) = Range("E" & i) & ";"
+
+    arr = Split(Range("E" & i), ";")(0)
+    tmp = ""
+    For j = 1 To Len(arr)
+        t = Mid(arr, j, 1)
+        If IsNumeric(t) = True Then
+            tmp = tmp & t
+        End If
+    Next
+    If d.Exists(tmp) = False Then
+        d.Add tmp, ""
+    End If
+
+Range("E" & i) = Left(Range("E" & i), Len(Range("E" & i)) - 1)
+Next
+
+k = d.keys
+For i = 0 To d.Count - 1
+Max = 0
+Min = 0
+    For Each rng In Range("E4:E" & lrow)
+        If InStr(rng, k(i)) > 0 Then
+            If Max = 0 Then
+                Max = rng.Row
+            Else
+                If Min = 0 Then
+                    If rng.Row - Max >= 0 Then
+                        Min = Max
+                        Max = rng.Row
+                    Else
+                        If rng.Row - Min < 0 Then
+                            Min = rng.Row
+                        End If
+                    End If
+                Else
+                    If rng.Row - Max > 0 Then
+                        Max = rng.Row
+                    Else
+                        If rng.Row - Min < 0 Then
+                            Min = rng.Row
+                        End If
+                    End If
+                End If
+            End If
+        End If
+    Next
+    If Max <> 0 And Min = 0 Then
+        Min = Max
+    End If
+
+If Max <> 0 Then
+    For Each rng In Range("A" & Min & ":U" & Max)
+        If rng.Interior.ColorIndex = 3 Or rng.Interior.ColorIndex = 5 Or rng.Interior.ColorIndex = 6 Then
+
+        'Black 4
+        Range("A" & Min & ":W" & Max).Select
+        Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+        Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+        With Selection.Borders(xlEdgeLeft)
+            .LineStyle = xlContinuous
+            .ColorIndex = 0
+            .TintAndShade = 0
+            .Weight = xlMedium
+        End With
+        With Selection.Borders(xlEdgeTop)
+            .LineStyle = xlContinuous
+            .ColorIndex = 0
+            .TintAndShade = 0
+            .Weight = xlMedium
+        End With
+        With Selection.Borders(xlEdgeBottom)
+            .LineStyle = xlContinuous
+            .ColorIndex = 0
+            .TintAndShade = 0
+            .Weight = xlMedium
+        End With
+        With Selection.Borders(xlEdgeRight)
+            .LineStyle = xlContinuous
+            .ColorIndex = 0
+            .TintAndShade = 0
+            .Weight = xlMedium
+        End With
+        Selection.Borders(xlInsideHorizontal).LineStyle = xlNone
+
+        Exit For
+        End If
+    Next
+End If
+
+Next
+End Sub
