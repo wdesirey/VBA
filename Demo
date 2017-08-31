@@ -1,0 +1,423 @@
+Option Explicit
+Sub Inputteam()
+Dim i%, n%, rng As Range, rngs As Range, x
+On Error Resume Next
+
+'info source
+If Range("C2").Value > 1 Then
+    If InStr(Range("F2"), "A1") > 0 Or InStr(Range("F2"), "B1") > 0 Or InStr(Range("F2"), "C1") > 0 Then
+        UserForm1.Show
+    End If
+End If
+
+'1 age group
+    If Range("H2") <> "" Then
+        If Range("G2") <> "" Then
+            Range("G2").Interior.ColorIndex = 6
+            With Range("G2").AddComment
+                .Visible = False
+                .Text "Delete"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "G2"
+        End If
+    End If
+
+'2 age automatic computation
+    If Range("K2") <> "" Then
+    n = 0
+    n = Application.WorksheetFunction.CountA(Sheets("sheet1").Columns(49)) + Application.WorksheetFunction.CountA(Sheets("sheet1").Columns(32)) + Application.WorksheetFunction.CountA(Sheets("sheet1").Columns(21))
+        If n > 3 And Range("H2") = "" Then
+            With Range("H2").AddComment
+                .Visible = False
+                .Text "Age"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "H2"
+        End If
+    End If
+
+'3 RIS flag
+    If Range("D2") = "RIS" Then
+        If Range("H2") = "" And Range("BG2") <> Worksheets("Config").Range("A3") Then
+            Range("BG2").Interior.ColorIndex = 6
+            With Range("BG2").AddComment
+                .Visible = False
+                .Text Worksheets("Config").Range("A3").Value
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+        ElseIf Range("H2") >= 18 And Range("BG2") <> Worksheets("Config").Range("A2") Then
+            Range("BG2").Interior.ColorIndex = 6
+            With Range("BG2").AddComment
+                .Visible = False
+                .Text Worksheets("Config").Range("A2").Value
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+        ElseIf Range("H2") < 18 And Range("BG2") <> Worksheets("Config").Range("A1") Then
+            Range("BG2").Interior.ColorIndex = 6
+            With Range("BG2").AddComment
+                .Visible = False
+                .Text Worksheets("Config").Range("A1").Value
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+        End If
+    End If
+
+'4 CON 30 age
+    If Range("D2") = "CON" And Range("H2") >= 30 And InStr(Range("R2"), Worksheets("Config").Range("A15")) = 0 Then
+        Range("R2").Interior.ColorIndex = 6
+        With Range("R2").AddComment
+            .Visible = False
+            .Text Worksheets("Config").Range("A15").Value
+        End With
+        Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "R2"
+    End If
+
+'5 Reason for use is primary disease
+    For Each rng In Range("O2:O" & Range("O1000").End(xlUp).Row)
+        If rng = Worksheets("Config").Range("A10") Then
+
+            For Each rngs In Range("AH2:AH" & Range("AH1000").End(xlUp).Row)
+                If rngs = Worksheets("Config").Range("A16") And Range("AL" & rngs.Row) = Worksheets("Config").Range("A14") And Range("AM" & rngs.Row) <> Worksheets("Config").Range("A10") Then
+                    Range("AM" & rngs.Row).Interior.ColorIndex = 6
+                    With Range("AM" & rngs.Row).AddComment
+                        .Visible = False
+                        .Text Worksheets("Config").Range("A10").Value
+                    End With
+                    Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AM" & rngs.Row
+                End If
+            Next
+
+        Exit For
+        End If
+    Next
+
+'6 treatment history hi,ie,blank
+    For Each rng In Range("O2:O" & Range("O1000").End(xlUp).Row)
+        If rng = Worksheets("Config").Range("A10") Or rng = Worksheets("Config").Range("A17") Then
+            If Range("Q" & rng.Row) <> Worksheets("Config").Range("A18") Then
+                Range("Q" & rng.Row).Interior.ColorIndex = 6
+                With Range("Q" & rng.Row).AddComment
+                    .Visible = False
+                    .Text Worksheets("Config").Range("A18").Value
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "Q" & rng.Row
+            End If
+        ElseIf rng = Worksheets("Config").Range("A11") Then
+            If Range("Q" & rng.Row) <> Worksheets("Config").Range("A19") Then
+                Range("Q" & rng.Row).Interior.ColorIndex = 6
+                With Range("Q" & rng.Row).AddComment
+                    .Visible = False
+                    .Text Worksheets("Config").Range("A19").Value
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "Q" & rng.Row
+            End If
+        Else
+            If Range("Q" & rng.Row) <> "" Then
+                Range("Q" & rng.Row).Interior.ColorIndex = 6
+                With Range("Q" & rng.Row).AddComment
+                    .Visible = False
+                    .Text "Delete"
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "Q" & rng.Row
+            End If
+        End If
+    Next
+
+''7 TRC tooth
+    If Range("D2") = "TRC" Then
+        For Each rng In Range("P2:P" & Range("P1000").End(xlUp).Row)
+            If rng = Worksheets("Config").Range("A8") And Range("BG2") <> Worksheets("Config").Range("A9") Then
+                Range("BG2").Interior.ColorIndex = 6
+                With Range("BG2").AddComment
+                    .Visible = False
+                    .Text Worksheets("Config").Range("A9").Value
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+            End If
+        Next
+'11 pain-keyword
+        n = 0
+        For Each rng In Range("P2:P" & Range("P1000").End(xlUp).Row)
+            If InStr(rng, Worksheets("Config").Range("A22").Value) > 0 And InStr(rng, Worksheets("Config").Range("A5").Value) = 0 Then
+                For Each rngs In Range("P2:P" & Range("P1000").End(xlUp).Row)
+                    If InStr(rngs, Worksheets("Config").Range("A5").Value) > 0 Then
+                        n = 1
+                    End If
+                Next
+
+                If n = 0 Then
+                    Range("P1").Interior.ColorIndex = 6
+                    With Range("P1").AddComment
+                        .Visible = False
+                        .Text Worksheets("Config").Range("A5").Value
+                    End With
+                    Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "P1"
+                End If
+            End If
+        Next
+
+    End If
+
+'8 ODR/DRT flag
+    If Range("D2") = "ODR" Or Range("D2") = "DRT" Then
+        n = 0
+        For Each rng In Range("O2:O" & Range("O1000").End(xlUp).Row)
+            If rng = Worksheets("Config").Range("A10") Then
+
+                If Range("P" & rng.Row) = Worksheets("Config").Range("A4") And Range("BG2") <> Worksheets("Config").Range("A4") Then
+                        Range("BG2").Interior.ColorIndex = 6
+                        With Range("BG2").AddComment
+                            .Visible = False
+                            .Text Worksheets("Config").Range("A4").Value
+                        End With
+                        Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+                ElseIf Range("P" & rng.Row) = Worksheets("Config").Range("A5") And Range("BG2") <> Worksheets("Config").Range("A5") Then
+                         Range("BG2").Interior.ColorIndex = 6
+                        With Range("BG2").AddComment
+                            .Visible = False
+                            .Text Worksheets("Config").Range("A5").Value
+                        End With
+                        Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+                End If
+
+            n = n + 1
+            End If
+        Next
+
+        If n >= 1 And Range("BG2").Interior.ColorIndex <> 6 And Range("BG2") <> Worksheets("Config").Range("A7") Then
+            Range("BG2").Interior.ColorIndex = 6
+            With Range("BG2").AddComment
+                .Visible = False
+                .Text Worksheets("Config").Range("A7").Value
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+        ElseIf n = 0 And Range("BG2") <> Worksheets("Config").Range("A6") Then
+            Range("BG2").Interior.ColorIndex = 6
+            With Range("BG2").AddComment
+                .Visible = False
+                .Text Worksheets("Config").Range("A6").Value
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BG2"
+        End If
+
+    End If
+
+'9 kind of reatment history is blank
+    For Each rng In Range("AI2:AI" & Range("AI1000").End(xlUp).Row)
+        If Range("AM" & rng.Row) = "" And Range("AN" & rng.Row) <> "" Then
+            For Each rngs In Range("P2:P" & Range("P1000").End(xlUp).Row)
+                If rngs = Range("AN" & rng.Row) Then
+                    Range("AM" & rng.Row).Interior.ColorIndex = 6
+                    With Range("AM" & rng.Row).AddComment
+                        .Visible = False
+                        .Text "Select"
+                    End With
+                    Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AM" & rng.Row
+                End If
+            Next
+        End If
+    Next
+
+'10 ODR/DRT/TAP cancer pain
+    If Range("D2") = "ODR" Or Range("D2") = "DRT" Or Range("D2") = "TAP" Then
+    n = 0
+        For Each rng In Range("P2:P" & Range("P1000").End(xlUp).Row)
+            If (InStr(rng, Worksheets("Config").Range("A20").Value) > 0 Or InStr(rng, Worksheets("Config").Range("A21").Value) > 0) And InStr(rng, Worksheets("Config").Range("A4").Value) = 0 Then
+
+                For Each rngs In Range("P2:P" & Range("P1000").End(xlUp).Row)
+                    If InStr(rngs, Worksheets("Config").Range("A4").Value) > 0 Then
+                        n = 1
+                    End If
+                Next
+
+                If n = 0 Then
+                    Range("P1").Interior.ColorIndex = 6
+                    With Range("P1").AddComment
+                        .Visible = False
+                        .Text Worksheets("Config").Range("A4").Value
+                    End With
+                    Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "P1"
+                End If
+                Exit For
+            End If
+        Next
+    End If
+
+'12 outcome
+    For Each rng In Range("S2:S" & Range("S1000").End(xlUp).Row)
+    n = 0
+        If Range("X" & rng.Row) = "" Then
+            Range("X" & rng.Row).Interior.ColorIndex = 6
+            With Range("X" & rng.Row).AddComment
+                .Visible = False
+                .Text "No Blank"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "X" & rng.Row
+        End If
+'13 outcome die
+        If Range("X" & rng.Row) = Worksheets("Config").Range("A23") Then
+            For Each rngs In Range("AE2:AE" & Range("AE100").End(xlUp).Row)
+                If Range("Y" & rng.Row) = rngs Then
+                    n = 1
+                End If
+            Next
+            If n = 0 Then
+                Range("AD1").Interior.ColorIndex = 6
+                With Range("AD1").AddComment
+                    .Visible = False
+                    .Text "Have not AE?"
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AD1"
+            End If
+        End If
+    Next
+
+'16 dose is blank = Unknow
+    For Each rng In Range("AH2:AH" & Range("AH1000").End(xlUp).Row)
+        If Range("AO" & rng.Row) = "" And Range("AL" & rng.Row) = Worksheets("Config").Range("A14") Then
+            If Range("AT" & rng.Row) <> Worksheets("Config").Range("A13") Or Range("AU" & rng.Row) <> "Unknow" Then
+                Range("AT" & rng.Row).Interior.ColorIndex = 6
+                Range("AU" & rng.Row).Interior.ColorIndex = 6
+                With Range("AT2").AddComment
+                    .Visible = False
+                    .Text Worksheets("Config").Range("A13").Value
+                End With
+                 With Range("AU2").AddComment
+                    .Visible = False
+                    .Text "Unknow"
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AT2&AU2"
+            End If
+        End If
+    Next
+
+'17 dose unit
+    If Application.WorksheetFunction.CountA(Sheets("sheet1").Columns(41)) <> Application.WorksheetFunction.CountA(Sheets("sheet1").Columns(42)) Then
+        Range("AP1").Interior.ColorIndex = 6
+        With Range("AP1").AddComment
+            .Visible = False
+            .Text "AO<>AP"
+        End With
+        Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AO&AP"
+    End If
+
+'18 ODR/DRT mg/day
+    For Each rng In Range("AH2:AH" & Range("AH1000").End(xlUp).Row)
+        If rng = Worksheets("Config").Range("A16") And Range("AL" & rng.Row) = Worksheets("Config").Range("A14") And Range("AO" & rng.Row) = "" And Range("AQ" & rng.Row) = "" Then
+            If Range("D2") = "ODR" Then
+                If InStr(Range("AT" & rng.Row), "mg/") = 0 Or Range("AR" & rng.Row) <> 1 Or Range("AS" & rng.Row) <> "日" Then
+                    Range("AT" & rng.Row).Interior.ColorIndex = 6
+                    With Range("AT" & rng.Row).AddComment
+                        .Visible = False
+                        .Text "3day/1day"
+                    End With
+                    Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AT&AR&AS" & rng.Row
+                End If
+            ElseIf Range("D2") = "DRT" Then
+                If InStr(Range("AT" & rng.Row), "mg/") = 0 Or Range("AR" & rng.Row) <> 3 Or Range("AS" & rng.Row) <> "日" Then
+                    Range("AT" & rng.Row).Interior.ColorIndex = 6
+                    With Range("AT" & rng.Row).AddComment
+                        .Visible = False
+                        .Text "3day/1day"
+                    End With
+                    Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "AT&AR&AS" & rng.Row
+                End If
+            End If
+        End If
+    Next
+
+'19 drug strat-end time
+    For Each rng In Range("AI2:AI" & Range("AI1000").End(xlUp).Row)
+        If (Range("AW" & rng.Row) <> "" Or Range("AY" & rng.Row) <> "") And Range("BA" & rng.Row) <> "" Then
+            Range("BA" & rng.Row).Interior.ColorIndex = 6
+            With Range("BA" & rng.Row).AddComment
+                .Visible = False
+                .Text "Delete"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BA" & rng.Row
+        End If
+'20 AL-BC
+        If Range("AL" & rng.Row) = Worksheets("Config").Range("A14") And Range("BC" & rng.Row) = "" Then
+            Range("BC" & rng.Row).Interior.ColorIndex = 6
+            With Range("BC" & rng.Row).AddComment
+                .Visible = False
+                .Text "No Blank"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BC" & rng.Row
+        End If
+'21 other company drug
+        If Range("AH" & rng.Row) = Worksheets("Config").Range("A24") And Range("AL" & rng.Row) = Worksheets("Config").Range("A14") Then
+            If InStr(Range("BF2"), Worksheets("Config").Range("A25").Value) = 0 Then
+                Range("BF2").Interior.ColorIndex = 6
+                With Range("BF2").AddComment
+                    .Visible = False
+                    .Text Worksheets("Config").Range("A25").Value
+                End With
+                Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BF2"
+            End If
+        End If
+    Next
+
+'22 ZYT
+    For Each rng In Range("AJ2:AJ" & Range("AJ1000").End(xlUp).Row)
+        If rng = Worksheets("Config").Range("A27") And Range("E2") = Worksheets("Config").Range("A26") And Range("BC" & rng.Row) = "" Then
+            Range("BC" & rng.Row).Interior.ColorIndex = 6
+            With Range("BC" & rng.Row).AddComment
+                .Visible = False
+                .Text "No Blank"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BC" & rng.Row
+        ElseIf (rng = Worksheets("Config").Range("A29") Or rng = Worksheets("Config").Range("A30")) And Range("E2") = Worksheets("Config").Range("A28") And Range("BC" & rng.Row) = "" Then
+            Range("BC" & rng.Row).Interior.ColorIndex = 6
+            With Range("BC" & rng.Row).AddComment
+                .Visible = False
+                .Text "No Blank"
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BC" & rng.Row
+        End If
+    Next
+
+'23 maruchi
+    If InStr(Range("BJ2"), Worksheets("Config").Range("A31").Value) > 0 Then
+        If InStr(Range("BE2"), "Case Characteristics: Multiple Patient (not individual case).") = 0 And InStr(Range("BE2"), "This report concerns multiple patients and no specific patient identifiers are provided.") = 0 Then
+            Range("BE2").Interior.ColorIndex = 6
+            With Range("BE2").AddComment
+                .Visible = False
+                .Text "Case Characteristics: Multiple Patient (not individual case)." & Chr(10) & "This report concerns multiple patients and no specific patient identifiers are provided."
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BE2"
+        End If
+    End If
+
+''24 A1-No further information is available.
+'    If InStr(Range("F2"), "A1") > 0 And Range("BK2") = "" And InStr(Range("BE2"), "No further information is available.") = 0 Then
+'        Range("BE2").Interior.ColorIndex = 6
+'        With Range("BE2").AddComment
+'            .Visible = False
+'            .Text "No further information is available."
+'        End With
+'        Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BE2"
+'    End If
+
+'25 Same Info
+    If Range("BL2") = Worksheets("Config").Range("A32") Then
+        If InStr(Range("BE2"), "This case is linked to local ID") = 0 And InStr(Range("BE2"), Worksheets("Config").Range("A33")) = 0 Then
+            Range("BE2").Interior.ColorIndex = 6
+            With Range("BE2").AddComment
+                .Visible = False
+                .Text "This case is linked to local ID 2017XXXX" & Worksheets("Config").Range("A33").Value
+            End With
+            Worksheets("Miss").Range("B" & Worksheets("Miss").Range("B100").End(xlUp).Row + 1) = "BE2"
+        End If
+    End If
+
+
+
+
+On Error GoTo 0
+''Sheet3.Activate
+End Sub
+
+Sub alllear()
+ActiveSheet.Cells.Clear
+Worksheets("Miss").Range("B2:B100").Clear
+End Sub
